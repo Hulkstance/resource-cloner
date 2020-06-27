@@ -3,20 +3,24 @@
 
 int main()
 {
+	// NOTE: BeginUpdateResourceW requires full path
+	wchar_t sourcePath[] = L"E:\\GitHub\\resource-cloner\\Clone\\Debug\\clone_from.exe";
+	wchar_t destinationPath[] = L"E:\\GitHub\\resource-cloner\\Clone\\Debug\\clone_to.exe";
+
 	try
 	{
+		// The resource types to copy
 		std::vector<LPCWSTR> resourceTypes;
 		resourceTypes.push_back(RT_ICON);
 		resourceTypes.push_back(RT_GROUP_ICON);
 		resourceTypes.push_back(RT_VERSION);
 		
-		auto resourceHelper = std::make_unique<ResourceHelper>(L"clone_from.exe");
-		auto iconAndVersionInfoFromFile = resourceHelper->GetResources(resourceTypes);
+		// Get source file resources
+		auto helper = std::make_unique<ResourceHelper>(sourcePath);
+		auto resources = helper->GetResources(resourceTypes);
 
-		// 3rd argument is false by default
-		// It means that it won't delete the existing resources
-		// Currently, it is set to true, so it will delete all existing resources
-		resourceHelper->SetResources(L"clone_to.exe", iconAndVersionInfoFromFile, true);
+		// Replaces destination file resources with specified ones
+		helper->SetResources(destinationPath, resources, true);
 	}
 	catch (std::exception& ex)
 	{

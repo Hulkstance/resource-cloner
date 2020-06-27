@@ -7,10 +7,10 @@ ResourceHelper::ResourceHelper(std::wstring fileName)
 {
 	this->fileName = fileName;
 
-	this->module = LoadLibraryEx(this->fileName.c_str(), nullptr, LOAD_LIBRARY_AS_DATAFILE);
+	this->module = LoadLibraryExW(this->fileName.c_str(), nullptr, LOAD_LIBRARY_AS_DATAFILE);
 	if (!this->module)
 	{
-		throw std::runtime_error("Could not open input file.");
+		throw std::runtime_error("Could not open source file.");
 	}
 }
 
@@ -25,7 +25,7 @@ bool ResourceHelper::EnumNamesFunc(HMODULE hModule, LPCWSTR lpType, LPWSTR lpNam
 		std::cout << reinterpret_cast<int>(lpName) << std::endl;
 	}
 
-	HRSRC hResource = hResource = FindResource(hModule, lpName, lpType);
+	HRSRC hResource = hResource = FindResourceW(hModule, lpName, lpType);
 
 	if (!hResource)
 	{
@@ -60,7 +60,7 @@ std::vector<Resource> ResourceHelper::GetResources(std::vector<LPCWSTR>& types)
 
 	for (LPCWSTR type : types)
 	{
-		EnumResourceNames(module, type, (ENUMRESNAMEPROC)EnumNamesFunc, 0);
+		EnumResourceNamesW(module, type, reinterpret_cast<ENUMRESNAMEPROCW>(EnumNamesFunc), 0);
 	}
 
 	return resources;
@@ -68,19 +68,19 @@ std::vector<Resource> ResourceHelper::GetResources(std::vector<LPCWSTR>& types)
 
 void ResourceHelper::SetResources(std::wstring fileName, std::vector<Resource>& resources, bool overrideOldResources)
 {
-	HANDLE handle = BeginUpdateResource(fileName.c_str(), overrideOldResources);
+	HANDLE handle = BeginUpdateResourceW(fileName.c_str(), overrideOldResources);
 
 	if (!handle)
 	{
-		throw std::runtime_error("Could not open output file.");
+		throw std::runtime_error("Could not open destination file.");
 	}
 
 	for (Resource resource : resources)
 	{
-		UpdateResource(handle, resource.lpType, (LPCWSTR)resource.lpName, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), resource.lpData, resource.dwSize);
+		UpdateResourceW(handle, resource.lpType, (LPCWSTR)resource.lpName, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), resource.lpData, resource.dwSize);
 	}
 
-	EndUpdateResource(handle, false);
+	EndUpdateResourceW(handle, false);
 }
 
 ResourceHelper::~ResourceHelper()

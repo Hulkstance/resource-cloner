@@ -1,5 +1,3 @@
-﻿  main.cpp
-  Resource.cpp
-  ResourceHelper.cpp
-  stdafx.cpp
-  Clone.vcxproj -> C:\Users\Admin\Desktop\Clone\Debug\Clone.exe
+﻿  ResourceHelper.cpp
+  main.cpp
+  Clone.vcxproj -> E:\GitHub\resource-cloner\Clone\Debug\Clone.exe
